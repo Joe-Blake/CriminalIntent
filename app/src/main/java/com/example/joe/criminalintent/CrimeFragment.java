@@ -59,11 +59,11 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        CrimeLab.get(getActivity()).updateCcrime(mCrime);
-//    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.get(getActivity()).updateCcrime(mCrime);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -75,8 +75,8 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
-                //UUID crimeId = mCrime.getId();
-                CrimeLab.get(getActivity()).deleteCrime(mCrime);
+                UUID crimeId = mCrime.getId();
+                CrimeLab.get(getActivity()).deleteCrime(crimeId);
                 getActivity().finish();     //销毁当前activity
                 return true;
             default:
