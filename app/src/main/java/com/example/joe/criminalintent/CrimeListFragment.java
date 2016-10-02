@@ -1,5 +1,6 @@
 package com.example.joe.criminalintent;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,7 +32,6 @@ public class CrimeListFragment extends Fragment {
     private boolean mSubtitleVisible;   //子标题栏状态
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
-
     /**
      * 创建并配置视图
      *
@@ -44,6 +44,7 @@ public class CrimeListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
+
 
         //创建视图并转交给LayoutManager。
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
@@ -62,7 +63,10 @@ public class CrimeListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //通知fragmentManager调用其管理的fragment的onCreateOptionsMenu()方法
         setHasOptionsMenu(true);
+
+
     }
+
 
     /**
      * 更新UI
