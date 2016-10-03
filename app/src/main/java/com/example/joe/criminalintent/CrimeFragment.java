@@ -175,7 +175,9 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        //获取联系人列表,隐式intent.
+        /**
+         * 获取联系人列表,隐式intent.
+         */
         final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts
                 .CONTENT_URI);
         mSuspectButton = (Button) v.findViewById(R.id.crime_suspect);
@@ -190,20 +192,29 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             mSuspectButton.setText(mCrime.getSuspect());
         }
 
-        //检查是否存在联系人应用,不存在则禁用mSuspectButton按钮
+        /**
+         * 检查是否存在联系人应用,不存在则禁用mSuspectButton按钮
+         */
         PackageManager packageManager = getActivity().getPackageManager();
+        //resolveActivity方法对包管理器进行查询,判断是否有Activity能够启动该Intent
         if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
             mSuspectButton.setEnabled(false);
         }
 
         mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+
+        /**
+         * 判断是否存在相机应用,不存在则禁用按钮
+         */
+        //调用camera的Intent
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         boolean canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(packageManager)
                 != null;
         mPhotoButton.setEnabled(canTakePhoto);
 
         if (canTakePhoto) {
+            //使用Uri传入图片保存路径
             Uri uri = Uri.fromFile(mPhotoFile);
             captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         }
@@ -289,6 +300,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         return report;
     }
 
+    //更新UI,显示图片
     private void updatePhotoView() {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);

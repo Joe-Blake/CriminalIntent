@@ -153,6 +153,8 @@ public class CrimeLab {
 
     //获取图片文件
     public File getPhotoFile(Crime crime) {
+
+        //获取常规文件目录下DIRECTORY_PICTURES子目录
         File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         if (externalFilesDir == null) {
