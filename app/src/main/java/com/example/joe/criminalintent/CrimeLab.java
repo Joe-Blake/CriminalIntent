@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +43,7 @@ public class CrimeLab {
     }
 
     /**
-     * 便利查询crimes
+     * 遍历查询crimes
      * @return crimes数组
      */
     public List<Crime> getCrimes() {
@@ -147,5 +149,16 @@ public class CrimeLab {
                 null //order by
         );
         return new CrimeCursorWrapper(cursor);
+    }
+
+    //获取图片文件
+    public File getPhotoFile(Crime crime) {
+        File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (externalFilesDir == null) {
+            return null;
+        }
+
+        return new File(externalFilesDir, crime.getPhotoFilename());
     }
 }
