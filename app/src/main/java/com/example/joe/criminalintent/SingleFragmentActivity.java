@@ -1,6 +1,7 @@
 package com.example.joe.criminalintent;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +16,19 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     //返回托管的fragment实例
     protected abstract Fragment createFragment();
 
+    /**
+     * 获取所需fragment的资源Id
+     * @return
+     */
+    @LayoutRes
+    protected int getLayoutResId() {
+        return R.layout.activity_fragment;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
+        setContentView(getLayoutResId());
 
         //在fragManager中查找fragment
         FragmentManager fm = getSupportFragmentManager();

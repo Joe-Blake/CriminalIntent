@@ -54,7 +54,21 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private File mPhotoFile;
+    private Callbacks mCallbacks;
 
+
+    public CrimeFragment() {
+    }
+
+    public interface Callbacks{
+        void onCrimeUpdated(Crime crime);
+    }
+
+    /**
+     * 获取绑定ID的CrimeFragment
+     * @param crimeId
+     * @return CrimeFragment
+     */
     public static CrimeFragment newInstance(UUID crimeId) {
 
         //使用Argument传入包含crimeId信息的bundle
@@ -64,6 +78,12 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
     }
 
     @Override
@@ -83,20 +103,31 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         CrimeLab.get(getActivity()).updateCcrime(mCrime);
     }
 
-    //创建标题栏菜单
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    /**
+     * 创建标题栏菜单
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime,menu);
     }
 
-    //菜单选择项
+    /**
+     * 菜单选择项
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
                 UUID crimeId = mCrime.getId();
                 CrimeLab.get(getActivity()).deleteCrime(crimeId);
+                updateCrime();
                 getActivity().finish();     //销毁当前activity
                 return true;
             default:
@@ -131,6 +162,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                updateCrime();
             }
 
             @Override
@@ -159,6 +191,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                updateCrime();
             }
         });
 
@@ -244,6 +277,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
+            updateCrime();
             updateDate();
         } else if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
@@ -260,16 +294,28 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
+                updateCrime();
                 mSuspectButton.setText(suspect);
             }finally {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+            updateCrime();
             updatePhotoView();
         }
     }
 
-    //更新时间
+    /**
+     * 实时更新detail修改(宽屏)
+     */
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCcrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
+    }
+
+    /**
+     * 更新时间
+     */
     private void updateDate() {
         String mDate = (String) DateFormat.format("EEEE, yyyy MMMM dd kk:mm", mCrime.getDate());
         mDateButton.setText(mDate);
