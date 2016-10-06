@@ -1,6 +1,7 @@
 package com.example.joe.criminalintent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -62,6 +64,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
 
     public interface Callbacks{
         void onCrimeUpdated(Crime crime);
+        void onCrimeDeleted(Crime crime);
     }
 
     /**
@@ -80,10 +83,16 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         return fragment;
     }
 
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        mCallbacks = (Callbacks) activity;
+//    }
+
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mCallbacks = (Callbacks) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
     }
 
     @Override
@@ -96,7 +105,9 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
     }
 
-    //退出CrimeFragment时更新数据库
+    /**
+     * 退出CrimeFragment时更新数据库
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -127,13 +138,21 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             case R.id.menu_item_delete_crime:
                 UUID crimeId = mCrime.getId();
                 CrimeLab.get(getActivity()).deleteCrime(crimeId);
-                updateCrime();
-                getActivity().finish();     //销毁当前activity
+                Activity activity = getActivity();
+                //如果当前activ不包含detail,销毁当前activity
+                if (activity.findViewById(R.id.detail_fragment_container) == null) {
+                    getActivity().finish();
+                } else {
+                    updateCrime();
+                    List<Crime> crimes = CrimeLab.get(getActivity()).getCrimes();
+                    if (!crimes.isEmpty()) {
+                        mCallbacks.onCrimeDeleted(crimes.get(0));
+                    }
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     @Nullable
@@ -321,7 +340,10 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         mDateButton.setText(mDate);
     }
 
-    //拼接default信息
+    /**
+     * 拼接default信息
+     * @return
+     */
     private String getCrimeReport() {
         String solvedString = null;
         if (mCrime.isSolved()) {
@@ -346,7 +368,9 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         return report;
     }
 
-    //更新UI,显示图片
+    /**
+     * 更新UI,显示图片
+     */
     private void updatePhotoView() {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);

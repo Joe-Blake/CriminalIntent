@@ -42,10 +42,26 @@ public class CrimeListActivity extends SingleFragmentActivity
         }
     }
 
+    /**
+     * 平板模式更新
+     * @param crime
+     */
     @Override
     public void onCrimeUpdated(Crime crime) {
         CrimeListFragment listFragment = (CrimeListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_container);
         listFragment.updateUI();
+    }
+
+    /**
+     * 平板模式删除crime
+     * @param crime
+     */
+    @Override
+    public void onCrimeDeleted(Crime crime) {
+        Fragment newDetail = CrimeFragment.newInstance(crime.getId());
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.detail_fragment_container, newDetail)
+                .commit();
     }
 }
