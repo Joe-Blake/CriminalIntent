@@ -18,6 +18,7 @@ import database.CrimeDbSchema.CrimeCursorWrapper;
 import static database.CrimeDbSchema.CrimeDbSchema.*;
 
 /**
+ * 数据存储--单例
  * Created by joe on 16/9/20.
  */
 
@@ -108,7 +109,7 @@ public class CrimeLab {
      * 更新
      * @param crime
      */
-    public void updateCcrime(Crime crime) {
+    public void updateCrime(Crime crime) {
         String uuidString = crime.getId().toString();
         ContentValues values = getContentValues(crime);
 
@@ -141,7 +142,7 @@ public class CrimeLab {
     private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(
                 CrimeTable.NAME,
-                null,
+                null,   //Columns - null selects all columns
                 whereClause,
                 whereArgs,
                 null, //group by
@@ -151,7 +152,9 @@ public class CrimeLab {
         return new CrimeCursorWrapper(cursor);
     }
 
-    //获取图片文件
+    /**
+     * 获取图片文件对象
+     */
     public File getPhotoFile(Crime crime) {
 
         //获取常规文件目录下DIRECTORY_PICTURES子目录

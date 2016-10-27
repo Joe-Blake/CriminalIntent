@@ -1,6 +1,7 @@
 package com.example.joe.criminalintent;
 
 /**
+ * 详情页activity
  * Created by joe on 2016/9/26.
  */
 
@@ -25,7 +26,7 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
     private List<Crime> mCrimes;
 
     /**
-     * 获取绑定id的intent
+     * 托管的fragment使用该方法获取绑定id的intent
      */
     public static Intent newIntent(Context packageContext, UUID crimeId) {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
@@ -38,15 +39,19 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
 
-        UUID crimeId = (UUID) getIntent()
-                .getSerializableExtra(EXTRA_CRIME_ID);
+        UUID crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
 
         mViewPager = (ViewPager) findViewById(R.id.activity_crime_pager_view_pager);
 
         mCrimes = CrimeLab.get(this).getCrimes();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        //该adapter销毁不需要的fragment
+        /**
+         * FragmentStatePagerAdapter销毁不需要的fragment实例，存在大量页面时选择节约内存，
+         * 否则使用FragmentPagerAdapter，只销毁fragment视图而非实例。
+         * FragmentStatePagerAdapter将返回的fragment添加给托管activity，
+         * 利用activity的fragmentManager的newInstance绑定id
+         */
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
             @Override
             public Fragment getItem(int position) {

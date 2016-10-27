@@ -68,13 +68,14 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     }
 
     /**
+     * "附加argument bundle给fragment必须在fragment创建后、添加给activity前完成"
      * 获取绑定ID的CrimeFragment
      * @param crimeId
      * @return CrimeFragment
      */
     public static CrimeFragment newInstance(UUID crimeId) {
 
-        //使用Argument传入包含crimeId信息的bundle
+        //用Argument传入包含crimeId信息的bundle
         Bundle args = new Bundle();
         args.putSerializable(ARG_CRIME_ID, crimeId);
 
@@ -82,12 +83,6 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        mCallbacks = (Callbacks) activity;
-//    }
 
     @Override
     public void onAttach(Context context) {
@@ -100,6 +95,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        //从argument获取id信息
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
@@ -111,7 +107,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        CrimeLab.get(getActivity()).updateCcrime(mCrime);
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
     }
 
     @Override
@@ -139,7 +135,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
                 UUID crimeId = mCrime.getId();
                 CrimeLab.get(getActivity()).deleteCrime(crimeId);
                 Activity activity = getActivity();
-                //如果当前activ不包含detail,销毁当前activity
+                //如果当前activity不包含detail,销毁当前activity(手机模式)
                 if (activity.findViewById(R.id.detail_fragment_container) == null) {
                     getActivity().finish();
                 } else {
@@ -155,15 +151,12 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
 
-        /*
-         * 2.父视图
-         * 3.是否将生成的视图添加到父视图
-         */
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
         mTitleField = (EditText) v.findViewById(R.id.crime_title);
         mTitleField.setText(mCrime.getTitle());
@@ -198,7 +191,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                //设置目标fragment
+                //设置数据传递的目标fragment
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
@@ -223,6 +216,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
                 i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                i = Intent.createChooser(i, getString(R.string.send_report));
                 startActivity(i);
             }
         });
@@ -270,7 +264,6 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             Uri uri = Uri.fromFile(mPhotoFile);
             captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         }
-
         mPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -328,7 +321,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
      * 实时更新detail修改(宽屏)
      */
     private void updateCrime() {
-        CrimeLab.get(getActivity()).updateCcrime(mCrime);
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
         mCallbacks.onCrimeUpdated(mCrime);
     }
 

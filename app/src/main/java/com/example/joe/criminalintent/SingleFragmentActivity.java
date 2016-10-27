@@ -13,7 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 
-    //返回托管的fragment实例
+    //返回activity托管的fragment实例
     protected abstract Fragment createFragment();
 
     /**

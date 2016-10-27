@@ -1,9 +1,6 @@
 package com.example.joe.criminalintent;
 
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -56,7 +53,7 @@ public class CrimeListFragment extends Fragment {
             Bundle savedInstanceState) {
 
 
-        //创建视图并转交给LayoutManager。
+        //创建视图,设置布局类型
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycle_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -68,12 +65,6 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        mCallbacks = (Callbacks) activity;
-//    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -83,10 +74,8 @@ public class CrimeListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //通知fragmentManager调用其管理的fragment的onCreateOptionsMenu()方法
+        //通知fragmentManager调用其管理的fragment的onCreateOptionsMenu()方法创建菜单
         setHasOptionsMenu(true);
-
-
     }
 
 
@@ -99,6 +88,10 @@ public class CrimeListFragment extends Fragment {
         updateUI();
     }
 
+    /**
+     * 保存子标题栏状态
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -133,14 +126,14 @@ public class CrimeListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.menu_item_new_crime:
+            case R.id.menu_item_new_crime://添加
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
                 updateUI();
                 mCallbacks.onCrimeSelected(crime);
                 return true;
 
-            case R.id.menu_item_show_subtitle:
+            case R.id.menu_item_show_subtitle://显示项目数
                 mSubtitleVisible = !mSubtitleVisible;
                 getActivity().invalidateOptionsMenu();
                 updateSubtitle();
@@ -170,7 +163,7 @@ public class CrimeListFragment extends Fragment {
     }
 
     /**
-     * 绑定RecyclerView和Adapter,更新UI
+     * 绑定RecyclerView和Adapter,更新列表及标题
      */
     public void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
@@ -184,7 +177,6 @@ public class CrimeListFragment extends Fragment {
             mCrimeAdapter.notifyDataSetChanged();
         }
         updateSubtitle();
-        
     }
 
 
@@ -206,7 +198,7 @@ public class CrimeListFragment extends Fragment {
             return new CrimeHolder(view);
         }
 
-        //通过索引位置 实现ViewHolder的View视图和模型层数据绑定
+        //视图和模型层数据绑定
         @Override
         public void onBindViewHolder(CrimeHolder holder, int position) {
             Crime crime = mCrimes.get(position);

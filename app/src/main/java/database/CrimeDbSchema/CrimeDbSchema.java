@@ -3,11 +3,13 @@ package database.CrimeDbSchema;
 /**
  * Created by joe on 2016/9/27.
  *
- * 定义数据表元素常量
  */
 
 public class CrimeDbSchema {
 
+    /**
+     * 定义数据表元素常量
+     */
     public static final class CrimeTable {
 
         public static final String NAME = "crimes";     //表名

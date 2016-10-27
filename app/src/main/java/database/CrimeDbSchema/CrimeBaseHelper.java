@@ -34,6 +34,7 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    //数据库存在时检查版本号，若CrimeOpenHelper中个版本号更高，调用onUpgrade()方法升级
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
